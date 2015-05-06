@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+var app = require('../app');
+var io = require('../routes/io');
+var http = require('http');
+var server = http.createServer(app);
+io.listen(server);
+server.listen(3001, function() {
+	console.log('Express server listening on port ' + 3001);
+});

@@ -1,0 +1,43 @@
+<img class="player"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.3.0/snap.svg-min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.8.0/lodash.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  $(function () {
+    var socket = io();
+    socket.on('next-image', refresh);
+
+    var $window = $(window);
+    var sized = false;
+    $window.resize(_.debounce(function () { sized = false; }, 250));
+
+    var $player = $('.player');
+    function refresh(image) {
+      if (!sized) {
+        sized = setSize(image);
+      }
+      $player.attr('src', image.data.toString());
+    }
+    function setSize(image) {
+      var imgRatio = image.width / image.height;
+      var viewRatio = $(window).width() / $(window).height();
+      if (imgRatio < viewRatio) {
+        var scaledWidth = $window.height() * imgRatio;
+        $player.css({
+          'width': scaledWidth,
+          'height': $window.height(),
+          'left': ($window.width() - scaledWidth) / 2
+        });
+      }
+      else {
+        var scaledHeight = $window.width() / imgRatio;
+        $player.css({
+          'width': $window.width(),
+          'height': scaledHeight,
+          'left': ($window.height() - scaledHeight) / 2
+        });
+      }
+    }
+  });
+</script>
