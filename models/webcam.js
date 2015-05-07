@@ -11,11 +11,10 @@ function getImage(callback) {
 			pos += buffer.write(d, pos, 'binary');
 		});
 		response.on('end', function() {
-			var base64Image = 'data:image/jpg;base64,' + buffer.toString('base64');
 			callback({
-				'width': 640,
-				'height': 480,
-				'data': base64Image
+				width: 640,
+				height: 480,
+				buffer: buffer
 			});
 		});
 	});

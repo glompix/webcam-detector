@@ -1,5 +1,6 @@
 var socketio = require('socket.io');
 var webcam = require('../models/webcam');
+var detector = require('../models/detector');
 
 var refreshInterval;
 var running = false;
@@ -11,9 +12,17 @@ module.exports.listen = function (server) {
   	console.log('CONNECTED :: ' + io.engine.clientsCount + ' users connected');
     function displayLoop(data) {
       framesSent++;
-    	webcam.getImage(function(data) {
-        socket.emit('next-image', data);
-        if (running) { displayLoop(); }
+      webcam.getImage(function(data) {
+        var base64Image = 'data:image/jpg;base64,' + data.buffer.toString('base64');
+        detector.detectFaces(data.buffer, function(err, faces) {
+          socket.emit('next-image', {
+            width: data.width,
+            height: data.height,
+            data: base64Image,
+            faces: faces
+          });
+          if (running) { displayLoop(); }
+        });
       });
     }
 
@@ -29,7 +38,7 @@ module.exports.listen = function (server) {
   		}
   	});
   });
-}
+};
 
 setInterval(function () {
   console.log((framesSent/10.0) + ' frames/sec');

@@ -1,7 +1,14 @@
 html, body {
   margin: 0; padding: 0;
+  background: #222;
 }
-
-.player {
-  margin: 0 auto;
+.overlay {
+  position: absolute;
+}
+.rect {
+  fill: transparent;
+  stroke-width: 2;
+}
+.face {
+  stroke: #9f9;
 }
